@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% import "macros.html" as macros %}
+
+{% block title %}
+    {{ super()}}
+    Maravilloso día
+{% endblock %}
+
+{% block content %}
+    {% if user_ip %}
+        <h1>Usuario {{user_ip}}</h1>
+    {% else %}
+        <a href="{{ url_for("index") }}">Ir a Inicio</a>
+    {% endif %}
+
+    <ul>
+        {% for todo in obligaciones %}
+            {{ macros.render_todo(todo) }}
+        {% endfor %}
+    </ul>
+{% endblock%}
