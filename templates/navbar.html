@@ -1,7 +1,26 @@
-<nav>
-    <ul>
-        <img src="{{ url_for("static", filename="images/foto_carnet.jpg")}}" alt="foto ejemplo">
-        <li><a href="{{ url_for("index") }}">Ir a Inicio</a></li>
-        <li><a href="www.google.com" target="_blank">Ir a sus contribuyentes</a></li>
+  <div class="navbar navbar-inverse" role="navigation">
+    <div class="container">
+    <div class="navbar-header">
+    <button type="button"
+                        class="navbar-toggle"
+                        data-toggle="collapse"
+                        data-target=".navbar-collapse">
+    <span class="sr-only">Toggle navigation</span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="{{ url_for('index') }}">
+    <img src="{{ url_for('static', filename='images/foto_carnet.jpg') }}"
+                         style="max-width: 48px"
+                         alt="foto ejemplo">
+    </a>
+    </div>
+    <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+    <li><a href="{{ url_for('index') }}">Inicio</a></li>
+    <li><a href="https://platzi.com" target="_blank">Platzi</a></li>
     </ul>
-</nav>
+    </div>
+    </div>
+    </div>

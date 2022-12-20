@@ -1,2 +1,4 @@
 flask
 uvicorn
+flask-bootstrap
+flask-wtf
