@@ -57,7 +57,11 @@ def inicio():
 
 @app.route("/contribuyentes", methods=["GET", "POST"])
 def contribuyentes():
-    obligaciones = ["Impuesto a la Renta", "Impuesto a las ventas",
-    "Retención en la Fuente", "Impuesto de industria y comercio"]
-    
-    return render_template("contribuyentes.html")
+    contribuyentes = 1000
+    return render_template("contribuyentes.html", contribuyentes=contribuyentes)
+
+@app.route("/inicio", methods=["GET", "POST"])
+def closesession():
+    session.clear()
+
+    return render_template("inicio.html")
