@@ -57,6 +57,7 @@ def inicio():
 
 @app.route("/contribuyentes", methods=["GET", "POST"])
 def contribuyentes():
+    username = inicio.username
     contribuyentes = 1000
     return render_template("contribuyentes.html", contribuyentes=contribuyentes)
 
