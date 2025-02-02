@@ -1,0 +1,26 @@
+const users = {
+    user1: 'password1',
+    user2: 'password2',
+    user3: 'password3'
+};
+
+const login = (username, password) => {
+    if (users[username] && users[username] === password) {
+        return true;
+    } else {
+        return 'Invalid username or password';
+    }
+};
+
+document.getElementById('loginForm').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const isSuccess = login(username, password);
+    if (isSuccess) {
+        window.location.href = './sesion.html';
+    } else {
+        document.getElementById('message').innerText = 'Invalid username or password';
+    }
+});
+

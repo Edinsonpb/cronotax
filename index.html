@@ -3,9 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Cronotax</title>
+    <link rel="stylesheet" href="./styles/index.css">
+    <script src="./login.js" defer></script>
 </head>
 <body>
+    <header>
+        <h1>Cronotax</h1>
+        <h4>Tu aliado para gestionar tu vida profesional</h4>
+    </header>
+    <main>
+        <h2>Ingresa a tu herramienta</h2>
+        <form id="loginForm">
+            <label for="username">Usuario:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Ingresar</button>
+        </form>
+
+        <h2>Si es tu primera vez en nuestro portal a continuación puedes 
+            registrate</h2>
+
+        <p id="message"></p>
+    </main>
+    <footer></footer>
     
 </body>
 </html>
