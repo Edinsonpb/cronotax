@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Cronotax</title>
+    <link rel="stylesheet" href="./styles/registro.css">
+    
+</head>
+<body>
+    <header>
+        <h1>Registro en Cronotax</h1>
+    </header>
+    <main>
+        <form id="registroForm">
+            <label for="nombres">Nombres:</label>
+            <input type="text" id="nombres" name="nombres" required>
+            
+            <label for="apellidos">Apellidos:</label>
+            <input type="text" id="apellidos" name="apellidos" required>
+            
+            <label for="telefono">Teléfono (whatsapp):</label>
+            <input type="tel" id="telefono" name="telefono" required>
+
+            <label for="email">Email (que será tu usuario):</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="password">Crea una clave para ingresar:</label>
+            <input type="password" id="password" name="password" required>
+            
+            <button type="submit">Registrar</button>
+        </form>
+        <p id="message"></p>
+    </main>
+    <footer></footer>
+    <script type="module" src="./registro.js" defer></script>
+</body>
+</html>

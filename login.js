@@ -1,3 +1,5 @@
+import { usersCronotax } from './usuarios.js';
+
 const users = {
     user1: 'password1',
     user2: 'password2',
@@ -8,19 +10,25 @@ const login = (username, password) => {
     if (users[username] && users[username] === password) {
         return true;
     } else {
-        return 'Invalid username or password';
+        return false;
     }
 };
 
-document.getElementById('loginForm').addEventListener('submit', (event) => {
-    event.preventDefault();
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    const isSuccess = login(username, password);
-    if (isSuccess) {
-        window.location.href = './sesion.html';
-    } else {
-        document.getElementById('message').innerText = 'Invalid username or password';
+document.addEventListener('DOMContentLoaded', () => {
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const isSuccess = login(username, password);
+            if (isSuccess) {
+                window.location.href = './sesion.html';
+            } else {
+                document.getElementById('message').innerText = 'Invalid username or password';
+            }
+        });
     }
 });
 
+export { users };

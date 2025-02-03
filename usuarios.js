@@ -1,0 +1,3 @@
+const usersCronotax = {};
+
+export { usersCronotax };
