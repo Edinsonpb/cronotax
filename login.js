@@ -1,5 +1,6 @@
 import { usersCronotax } from './usuarios.js';
 import { users } from './usuarios.js';
+export { users };
 
 const login = (username, password) => {
     if (users[username] && users[username] === password) {
