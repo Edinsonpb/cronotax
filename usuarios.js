@@ -7,3 +7,4 @@ const users = {
 };
 
 export { usersCronotax };
+export { users };
