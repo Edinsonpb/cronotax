@@ -1,10 +1,5 @@
 import { usersCronotax } from './usuarios.js';
-
-const users = {
-    user1: 'password1',
-    user2: 'password2',
-    user3: 'password3'
-};
+import { users } from './usuarios.js';
 
 const login = (username, password) => {
     if (users[username] && users[username] === password) {
@@ -30,5 +25,3 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-
-export { users };
