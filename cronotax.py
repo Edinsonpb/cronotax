@@ -1,8 +1,4 @@
 import pandas as pd
-import numpy as np
-from datetime import datetime
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 import streamlit as st
 import os
 
@@ -18,35 +14,7 @@ def load_excel_data():
             
         sheets = {
             'declarantes': pd.read_excel(excel_path, sheet_name='declarantes', dtype={'Nit': str}),
-            'ivabim': pd.read_excel(excel_path, sheet_name='ivabim'),
-            'ivacua': pd.read_excel(excel_path, sheet_name='ivacua'),
-            'rstivaan': pd.read_excel(excel_path, sheet_name='rstivaan'),
-            'retefte': pd.read_excel(excel_path, sheet_name='retefte'),
-            'parafiscales': pd.read_excel(excel_path, sheet_name='parafiscales'),
-            'impocons': pd.read_excel(excel_path, sheet_name='impocons'),
-            'rtapn': pd.read_excel(excel_path, sheet_name='rtapn'),
-            'rtapj': pd.read_excel(excel_path, sheet_name='rtapj'),
-            'exogenaDIANngc': pd.read_excel(excel_path, sheet_name='exogenaDIANngc'),
-            'exogenaTULUA': pd.read_excel(excel_path, sheet_name='exogenaTULUA'),
-            'exogenaDOSQUEBRADAS': pd.read_excel(excel_path, sheet_name='exogenaDOSQUEBRADAS'),
-            'exogenaPEREIRA': pd.read_excel(excel_path, sheet_name='exogenaPEREIRA'),
-            'exogenaBOGOTA': pd.read_excel(excel_path, sheet_name='exogenaBOGOTA'),
-            'icabogotac': pd.read_excel(excel_path, sheet_name='icabogotac'),
-            'icabogotaa': pd.read_excel(excel_path, sheet_name='icabogotaa'),
-            'reteicabogota': pd.read_excel(excel_path, sheet_name='reteicabogota'),
-            'icadosquebradas': pd.read_excel(excel_path, sheet_name='icadosquebradas'),
-            'reteicadosquebradas': pd.read_excel(excel_path, sheet_name='reteicadosquebradas'),
-            'icapereira': pd.read_excel(excel_path, sheet_name='icapereira'),
-            'reteicapereira': pd.read_excel(excel_path, sheet_name='reteicapereira'),
-            'icasantarosa': pd.read_excel(excel_path, sheet_name='icasantarosa'),
-            'reteicasantarosa': pd.read_excel(excel_path, sheet_name='reteicasantarosa'),
-            'icatulua': pd.read_excel(excel_path, sheet_name='icatulua'),
-            'reteicatulua': pd.read_excel(excel_path, sheet_name='reteicatulua'),
-            'nomelect': pd.read_excel(excel_path, sheet_name='nomelect'),
-            'ipat': pd.read_excel(excel_path, sheet_name='ipat'),
-            'rst': pd.read_excel(excel_path, sheet_name='rst'),
-            'supersoc': pd.read_excel(excel_path, sheet_name='supersoc'),
-            'actextpn': pd.read_excel(excel_path, sheet_name='actextpn')
+            'ivabim': pd.read_excel(excel_path, sheet_name='ivabim', parse_dates=True)
         }
         return sheets
     except Exception as e:
@@ -56,9 +24,6 @@ def load_excel_data():
 def process_declarantes(df):
     """Process the declarantes DataFrame to add UDN and DDN columns."""
     try:
-        # Mostrar las columnas disponibles
-        st.write("Columnas disponibles en el DataFrame:", df.columns.tolist())
-        
         # Asegurarse de que Nit sea string
         df['Nit'] = df['Nit'].astype(str)
         # Extraer UDN y DDN
@@ -69,36 +34,47 @@ def process_declarantes(df):
         st.error(f"Error al procesar los declarantes: {str(e)}")
         return None
 
-def filter_declarantes(df):
-    """Filter declarantes based on different tax types."""
+def filter_iva_bimestral(df):
+    """Filter declarantes IVA Bimestral."""
     try:
         # Verificar si la columna First Name existe
         if 'First Name' not in df.columns:
-            st.warning("La columna 'First Name' no existe en el archivo. Usando solo NIT.")
             columns_to_show = ['Nit', 'udn', 'ddn']
         else:
             columns_to_show = ['Nit', 'First Name', 'udn', 'ddn']
 
-        return {
-            'iva_bim': df[df['IVA'] == 'B'][columns_to_show],
-            'iva_cua': df[df['IVA'] == 'C'][columns_to_show],
-            'rft': df[df['RFT'] == 'X'][columns_to_show],
-            'ico': df[df['ICO'] == 'X'][columns_to_show]
-        }
+        # Filtrar declarantes IVA Bimestral
+        iva_bim_mask = df['IVA'] == 'B'
+        return df[iva_bim_mask][columns_to_show]
     except Exception as e:
-        st.error(f"Error al filtrar los declarantes: {str(e)}")
+        st.error(f"Error al filtrar los declarantes IVA Bimestral: {str(e)}")
         return None
+
+def format_dates(df):
+    """Format all date columns to YYYY-MM-DD format."""
+    try:
+        # Identificar columnas de fecha
+        date_columns = df.select_dtypes(include=['datetime64']).columns
+        
+        # Formatear cada columna de fecha
+        for col in date_columns:
+            df[col] = df[col].dt.strftime('%Y-%m-%d')
+        
+        return df
+    except Exception as e:
+        st.error(f"Error al formatear las fechas: {str(e)}")
+        return df
 
 def main():
     # Set page config for Streamlit
     st.set_page_config(
-        page_title="Cronograma Legal y Tributario",
+        page_title="IVA Bimestral con Fechas",
         page_icon="📅",
         layout="wide"
     )
 
     # Title and author
-    st.title("Cronograma Legal y Tributario")
+    st.title("IVA Bimestral con Fechas")
     st.caption("Autor: EDINSON PARRA BAHOS")
 
     # Load data directly from Dataframes folder
@@ -109,21 +85,48 @@ def main():
         declarantes = process_declarantes(sheets['declarantes'])
         
         if declarantes is not None:
-            filtered_declarantes = filter_declarantes(declarantes)
+            # Filtrar declarantes IVA Bimestral
+            iva_bim_declarantes = filter_iva_bimestral(declarantes)
             
-            if filtered_declarantes is not None:
-                # Display data tables
-                st.subheader("Declarantes IVA Bimestral")
-                st.dataframe(filtered_declarantes['iva_bim'])
-
-                st.subheader("Declarantes IVA Cuatrimestral")
-                st.dataframe(filtered_declarantes['iva_cua'])
-
-                st.subheader("Declarantes RFT")
-                st.dataframe(filtered_declarantes['rft'])
-
-                st.subheader("Declarantes ICO")
-                st.dataframe(filtered_declarantes['ico'])
+            if iva_bim_declarantes is not None and not iva_bim_declarantes.empty:
+                # Mostrar las columnas disponibles en ivabim para debugging
+                st.write("Columnas disponibles en ivabim:", sheets['ivabim'].columns.tolist())
+                
+                # Asegurarse de que UDN sea string en ambos DataFrames
+                iva_bim_declarantes['udn'] = iva_bim_declarantes['udn'].astype(str)
+                
+                # Verificar si la columna existe como 'UDN' o 'udn'
+                if 'UDN' in sheets['ivabim'].columns:
+                    sheets['ivabim']['UDN'] = sheets['ivabim']['UDN'].astype(str)
+                    right_on = 'UDN'
+                elif 'udn' in sheets['ivabim'].columns:
+                    sheets['ivabim']['udn'] = sheets['ivabim']['udn'].astype(str)
+                    right_on = 'udn'
+                else:
+                    st.error("No se encontró la columna UDN en la pestaña ivabim")
+                    return
+                
+                # Realizar el merge usando UDN como clave
+                merged_df = pd.merge(
+                    iva_bim_declarantes,
+                    sheets['ivabim'],
+                    left_on='udn',
+                    right_on=right_on,
+                    how='left'
+                )
+                
+                # Formatear las fechas
+                merged_df = format_dates(merged_df)
+                
+                # Mostrar la tabla combinada
+                st.subheader("Declarantes IVA Bimestral con Fechas")
+                st.dataframe(merged_df)
+            else:
+                st.warning("No se encontraron declarantes IVA Bimestral")
+        else:
+            st.error("Error al procesar los declarantes")
+    else:
+        st.error("Error al cargar los datos")
 
 if __name__ == "__main__":
-    main() 
+    main()
