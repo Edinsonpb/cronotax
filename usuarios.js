@@ -1,7 +1,7 @@
 const usersCronotax = {};
 
 const users = {
-    user1: 'password1',
+    94390997: 'evapb1089',
     user2: 'password2',
     user3: 'password3'
 };

@@ -1,0 +1,585 @@
+---
+title: "Cronograma Legal y Tributario"
+author: "EDINSON PARRA BAHOS"
+date: '2022-12-25'
+output: 
+  html_document:
+    df_print: kable
+---
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+library(calendR)
+library(lubridate)
+library(readxl)
+library(dplyr)
+library(base)
+library(ggplot2)
+library(kableExtra)
+library(tidyr)
+library(DT)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+dia_inicio_reporte <- "2024-12-31"
+
+cronotax_declarantes <- read_excel("cronotax.xlsx", 
+    sheet = "declarantes")
+
+cronotax_ivabim <- read_excel("cronotax.xlsx", 
+    sheet = "ivabim", 
+    col_types = c("text", "text", "date", "date", 
+        "date", "date", "date", "date", "date", "date", 
+        "date", "date", "date", "date", "date", "date", 
+        "date", "date", "date", "date", "date", "date", 
+        "date", "date", "date", "date"))
+
+cronotax_ivabim <- subset(cronotax_ivabim, 
+                          select = c(-2))
+
+cronotax_ivacua <- read_excel("cronotax.xlsx", 
+    sheet = "ivacua",
+    col_types = c("text", "text", "date", "date", "date",
+                  "date", "date", "date", "date", "date", 
+                  "date", "date", "date", "date"))
+
+cronotax_ivacua <- subset(cronotax_ivacua,
+                          select = c(-2))
+
+cronotax_ivaan <- read_excel("cronotax.xlsx", 
+    sheet = "rstivaan", 
+    col_types = c("text", "text", "date", "date",
+                  "date", "date", "date", "date", "date"))
+
+cronotax_ivaan <- subset(cronotax_ivaan,
+                         select = c(-2))
+
+cronotax_retefte <- read_excel("cronotax.xlsx", 
+    sheet = "retefte", col_types = c("text", "text", "date", 
+        "date", "date", "date", "date", "date", "date", 
+        "date", "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date"))
+
+cronotax_retefte <- subset(cronotax_retefte,
+                           select = c(-2))
+
+cronotax_aportes <- read_excel("cronotax.xlsx", 
+    sheet = "parafiscales", col_types = c("text", "text", 
+        "date", "date", "date", "date", "date", 
+        "date", "date", "date", "date", "date", 
+        "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date",
+        "date"))
+
+cronotax_aportes <- subset(cronotax_aportes, select = c(-2))
+
+cronotax_impcons <- read_excel("cronotax.xlsx", 
+    sheet = "impocons", col_types = c("text", "text", 
+        "date", "date", "date", "date", "date", "date", 
+        "date", "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date", "date"))
+
+cronotax_impcons <- subset(cronotax_impcons,
+                           select = c(-2))
+
+cronotax_renta_pn <- read_excel("cronotax.xlsx", 
+    sheet = "rtapn", col_types = c("text", 
+        "text", "date", "date", "date", "date"))
+
+cronotax_renta_pn <- subset(cronotax_renta_pn, select = c(-2))
+
+cronotax_renta_pj <- read_excel("cronotax.xlsx", 
+    sheet = "rtapj", col_types = c("text","text", 
+         "text","date", "date", "date", "date",
+         "date", "date", "date", "date"))
+
+cronotax_renta_pj <- subset(cronotax_renta_pj, select = c(-1,-3))
+
+cronotax_exogenadian_no_gc <- read_excel("cronotax.xlsx", 
+    sheet = "exogenaDIANngc", col_types = c("text", 
+        "date", "date", "date", "date"))
+
+cronotax_exo_ica_tulua <- read_excel("cronotax.xlsx",
+                                     sheet = "exogenaTULUA",
+                                     col_types = 
+                                       c("text", "date", "date"))
+
+cronotax_exo_ica_dosquebradas <- read_excel("cronotax.xlsx",
+                                     sheet = "exogenaDOSQUEBRADAS",
+                                     col_types = 
+                                       c("text", "date", "date",
+                                         "date"))
+
+cronotax_exo_ica_pereira <- read_excel("cronotax.xlsx",
+                                     sheet = "exogenaPEREIRA",
+                                     col_types = 
+                                       c("text", "date", "date",
+                                         "date"))
+
+cronotax_exo_ica_bogota <- read_excel("cronotax.xlsx",
+                                     sheet = "exogenaBOGOTA",
+                                     col_types = 
+                                       c("text", "date", "date"))
+
+cronotax_ica_bogota_c <- read_excel("cronotax.xlsx", 
+    sheet = "icabogotac", col_types = c("text", 
+        "date", "date", "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date", "date", "date",
+        "date"))
+
+cronotax_ica_bogota_a <- read_excel("cronotax.xlsx", 
+    sheet = "icabogotaa", col_types = c("text", "date"))
+
+cronotax_reteica_bogota <- read_excel("cronotax.xlsx", 
+    sheet = "reteicabogota", col_types = c("text", 
+        "date", "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date", "date"))
+
+cronotax_ica_dosquebradas <- read_excel("cronotax.xlsx", 
+    sheet = "icadosquebradas", col_types = c("text", 
+        "date", "date", "date"))
+
+cronotax_reteica_dosquebradas <- read_excel("cronotax.xlsx", 
+    sheet = "reteicadosquebradas", col_types = c("text", 
+        "date", "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date", "date"))
+
+cronotax_ica_pereira <- read_excel("cronotax.xlsx", 
+    sheet = "icapereira", col_types = c("text", 
+        "date", "date", "date"))
+
+cronotax_reteica_pereira <- read_excel("cronotax.xlsx", 
+    sheet = "reteicapereira", col_types = c("text", 
+        "date", "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date", "date"))
+
+cronotax_ica_santarosa <- read_excel("cronotax.xlsx", 
+    sheet = "icasantarosa", col_types = c("text", 
+        "date"))
+
+cronotax_reteica_santarosa <- read_excel("cronotax.xlsx", 
+    sheet = "reteicasantarosa", col_types = c("text", 
+        "date", "date", "date", "date", "date", "date"))
+
+cronotax_ica_tulua <- read_excel("cronotax.xlsx", 
+    sheet = "icatulua", col_types = c("text", 
+        "date", "date", "date", "date", "date", "date" ))
+
+cronotax_reteica_tulua <- read_excel("cronotax.xlsx", 
+    sheet = "reteicatulua", col_types = c("text", 
+        "date", "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date", "date"))
+
+cronotax_nom_elect <- read_excel("cronotax.xlsx", 
+    sheet = "nomelect", col_types = c("text", "text", 
+        "date", "date", "date", "date", "date", "date", 
+        "date", "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date", "date", 
+        "date", "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date", "date",
+        "date", "date", "date", "date", "date", "date"))
+
+cronotax_nom_elect <- subset(cronotax_nom_elect,
+                             select = c(-2))
+
+cronotax_imp_pat <- read_excel("cronotax.xlsx", 
+    sheet = "ipat", col_types = c("text", "text", 
+        "date", "date", "date", "date",
+        "date", "date", "date", "date"))
+
+cronotax_imp_pat <- subset(cronotax_imp_pat,
+                           select = c(-2))
+
+cronotax_rst <- read_excel("cronotax.xlsx", 
+    sheet = "rst", col_types = c("text", "text", 
+        "date","date","date","date","date", "date",
+        "date","date","date","date","date", "date",
+        "date","date","date","date","date", "date",
+        "date","date","date","date","date", "date",
+        "date","date","date","date"))
+
+cronotax_rst <- subset(cronotax_rst,
+                       select = c(-2))
+
+cronotax_supersoc <- read_excel("cronotax.xlsx", 
+    sheet = "supersoc", col_types = c("text", 
+        "date"))
+
+cronotax_act_ext_pn <- read_excel("cronotax.xlsx", 
+    sheet = "actextpn", col_types = c("text", "text",
+        "date", "date", "date", "date"))
+
+cronotax_act_ext_pn <- subset(cronotax_act_ext_pn,
+                              select = c(-2))
+
+```
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+length_nit <- nchar(cronotax_declarantes$Nit)
+udn <- c(substr(cronotax_declarantes$Nit, length_nit, length_nit))
+ddn <- c(substr(cronotax_declarantes$Nit, length_nit-1, length_nit))
+cronotax_declarantes_udn <- cbind(cronotax_declarantes, udn, ddn)
+cant_col <- ncol(cronotax_declarantes_udn)
+
+```
+
+```{r include=FALSE}
+
+decl_iva_bim <- subset(cronotax_declarantes_udn, cronotax_declarantes_udn$IVA == "B", select = c(1:2, (cant_col-1):(cant_col)))
+
+decl_iva_cua <- subset(cronotax_declarantes_udn, cronotax_declarantes_udn$IVA == "C", select = c(1:2, (cant_col-1):(cant_col)))
+
+decl_rft <- subset(cronotax_declarantes_udn, cronotax_declarantes_udn$RFT == "X", select = c(1:2, (cant_col-1):(cant_col)))
+
+decl_ico <- subset(cronotax_declarantes_udn, cronotax_declarantes_udn$ICO == "X", select = c(1:2, (cant_col-1):(cant_col)))
+
+decl_apor <- subset(cronotax_declarantes_udn, cronotax_declarantes_udn$SEG == "X", select = c(1:2, (cant_col-1):(cant_col)))
+
+decl_pn <- subset(cronotax_declarantes_udn, cronotax_declarantes_udn$TP == "PN")
+
+decl_renta_pn <- subset(decl_pn, decl_pn$RT1 == "X", select = c(1:2, (cant_col-1):(cant_col)))
+
+decl_pj <- subset(cronotax_declarantes_udn, cronotax_declarantes_udn$TP == "PJ")
+
+decl_renta_pj <- subset(decl_pj, decl_pj$RT1 == "X", select = c(1:2, (cant_col-1):(cant_col)))
+
+report_exogena_dian_ngc <- subset(cronotax_declarantes_udn, cronotax_declarantes_udn$EXO == "A", select = c(1:2, (cant_col-1):(cant_col)))
+
+repor_exogena_ica_tulua <- subset(cronotax_declarantes_udn,
+                                  cronotax_declarantes_udn$EXICA == "TULUA", select = c(1:2, (cant_col-1):(cant_col)))
+
+repor_exogena_ica_dosquebradas <- subset(cronotax_declarantes_udn,
+                                  cronotax_declarantes_udn$EXICA == "DOSQUEBRADAS", select = c(1:2, (cant_col-1):(cant_col)))
+
+repor_exogena_ica_pereira <- subset(cronotax_declarantes_udn,
+                                  cronotax_declarantes_udn$EXICA == "PEREIRA", select = c(1:2, (cant_col-1):(cant_col)))
+
+repor_exogena_ica_bogota <- subset(cronotax_declarantes_udn,
+                                  cronotax_declarantes_udn$EXICA == "BOGOTA", select = c(1:2, (cant_col-1):(cant_col)))
+
+
+decl_ica_bogota_c <- subset(cronotax_declarantes_udn, cronotax_declarantes_udn$RTI == "BOGOTA" & cronotax_declarantes_udn$ICA == "B", select = c(1:2, (cant_col-1):(cant_col)))
+
+decl_ica_bogota_a <- subset(cronotax_declarantes_udn, cronotax_declarantes_udn$RTI == "BOGOTA" & cronotax_declarantes_udn$ICA == "A", select = c(1:2, (cant_col-1):(cant_col)))
+
+decl_reteica_bogota <- subset(cronotax_declarantes_udn, cronotax_declarantes_udn$RTI == "BOGOTA", select = c(1:2, (cant_col-1):(cant_col)))
+
+decl_ica_dosquebradas <- subset(cronotax_declarantes_udn, cronotax_declarantes_udn$RTI == "DOSQUEBRADAS", select = c(1:2, (cant_col-1):(cant_col)))
+
+decl_reteica_dosquebradas <- subset(cronotax_declarantes_udn, cronotax_declarantes_udn$RTI == "DOSQUEBRADAS", select = c(1:2, (cant_col-1):(cant_col)))
+
+decl_ica_pereira <- subset(cronotax_declarantes_udn, cronotax_declarantes_udn$RTI == "PEREIRA", select = c(1:2, (cant_col-1):(cant_col)))
+
+decl_reteica_pereira <- subset(cronotax_declarantes_udn, cronotax_declarantes_udn$RTI == "PEREIRA", select = c(1:2, (cant_col-1):(cant_col)))
+
+decl_ica_santarosa <- subset(cronotax_declarantes_udn, cronotax_declarantes_udn$RTI == "SANTAROSA", select = c(1:2, (cant_col-1):(cant_col)))
+
+decl_reteica_santarosa <- subset(cronotax_declarantes_udn, cronotax_declarantes_udn$RTI == "SANTAROSA", select = c(1:2, (cant_col-1):(cant_col)))
+
+decl_ica_tulua <- subset(cronotax_declarantes_udn, cronotax_declarantes_udn$RTI == "TULUA", select = c(1:2, (cant_col-1):(cant_col)))
+
+decl_reteica_tulua <- subset(cronotax_declarantes_udn, cronotax_declarantes_udn$RTI == "TULUA", select = c(1:2, (cant_col-1):(cant_col)))
+
+report_nom_elect <- subset(cronotax_declarantes_udn, cronotax_declarantes_udn$nomelec == "X", select = c(1:2, (cant_col-1):(cant_col)))
+
+decl_ipat <- subset(cronotax_declarantes_udn, cronotax_declarantes_udn$IPA == "X", select = c(1:2, (cant_col-1):(cant_col)))
+
+decl_rst <- subset(cronotax_declarantes_udn, cronotax_declarantes_udn$RST == "X", select = c(1:2, (cant_col-1):(cant_col)))
+
+repor_supersoc <- subset(cronotax_declarantes_udn, cronotax_declarantes_udn$SUPERVIG == "SUPERSOC", select = c(1:2, (cant_col-1):(cant_col)))
+
+decl_act_ext_pn <- subset(decl_pn, decl_pn$ActExtPn == "X", select = c(1:2, (cant_col-1):(cant_col)))
+
+```
+
+```{r include=FALSE}
+  
+cronotax_decl_iva_bim <- decl_iva_bim %>% left_join(cronotax_ivabim, by = "udn")
+
+cronotax_decl_iva_cua <- decl_iva_cua %>% left_join(cronotax_ivacua, by = "udn")
+
+cronotax_decl_rfte <- decl_rft %>% left_join(cronotax_retefte, by = "udn")
+
+cronotax_decl_ico <- decl_ico %>% left_join(cronotax_impcons, by = "udn")
+
+cronotax_decl_apor <- decl_apor %>% left_join(cronotax_aportes, by = "ddn")
+
+cronotax_decl_renta_pn <- decl_renta_pn %>% left_join(cronotax_renta_pn, by = "ddn")
+
+cronotax_decl_renta_pj <- decl_renta_pj %>% left_join(cronotax_renta_pj, by = "udn")
+
+cronotax_report_exo_dian_ngc <- report_exogena_dian_ngc %>% left_join(cronotax_exogenadian_no_gc, by = "ddn")
+
+cronotax_report_exo_ica_tulua <- repor_exogena_ica_tulua %>%
+  left_join(cronotax_exo_ica_tulua, by = "udn")
+
+cronotax_report_exo_ica_dosquebradas <- repor_exogena_ica_dosquebradas %>%
+  left_join(cronotax_exo_ica_dosquebradas, by = "udn")
+
+cronotax_report_exo_ica_pereira <- repor_exogena_ica_pereira %>%
+  left_join(cronotax_exo_ica_pereira, by = "udn")
+
+cronotax_report_exo_ica_bogota <- repor_exogena_ica_bogota %>%
+  left_join(cronotax_exo_ica_bogota, by = "udn")
+
+cronotax_decl_ica_bogota_a <- decl_ica_bogota_a %>% left_join(cronotax_ica_bogota_a, by = "udn")
+
+cronotax_decl_ica_bogota_c <- decl_ica_bogota_c %>% left_join(cronotax_ica_bogota_c, by = "udn")
+
+cronotax_decl_reteica_bogota <- decl_reteica_bogota %>% left_join(cronotax_reteica_bogota, by = "udn")
+
+cronotax_decl_ica_dosquebradas <- decl_ica_dosquebradas %>% left_join(cronotax_ica_dosquebradas, by = "udn")
+
+cronotax_decl_reteica_dosquebradas <- decl_reteica_dosquebradas %>% left_join(cronotax_reteica_dosquebradas, by = "udn")
+
+cronotax_decl_ica_pereira <- decl_ica_pereira %>% left_join(cronotax_ica_pereira, by = "udn")
+
+cronotax_decl_reteica_pereira <- decl_reteica_pereira %>% left_join(cronotax_reteica_pereira, by = "udn")
+
+cronotax_decl_ica_santarosa <- decl_ica_santarosa %>% left_join(cronotax_ica_santarosa, by = "udn")
+
+cronotax_decl_reteica_santarosa <- decl_reteica_santarosa %>% left_join(cronotax_reteica_santarosa, by = "udn")
+
+cronotax_decl_ica_tulua <- decl_ica_tulua %>% left_join(cronotax_ica_tulua, by = "udn")
+
+cronotax_decl_reteica_tulua <- decl_reteica_tulua %>% left_join(cronotax_reteica_tulua, by = "udn")
+
+cronotax_report_nom_elect <- report_nom_elect %>% left_join(cronotax_nom_elect, by = "udn")
+
+cronotax_decl_impat <- decl_ipat %>% left_join(cronotax_imp_pat, by = "udn")
+
+cronotax_decl_rst <- decl_rst %>% left_join(cronotax_rst, by = "udn")
+
+cronotax_report_supersoc <- repor_supersoc %>% left_join(cronotax_supersoc, by = "ddn")
+
+cronotax_decl_act_ext_pn <- decl_act_ext_pn %>% left_join(cronotax_act_ext_pn, by = "ddn")
+
+```
+
+```{r include=FALSE}
+
+eventos_bim <- gather(data = cronotax_decl_iva_bim, key = "evento", value = "plazo", 5:ncol(cronotax_decl_iva_bim))
+
+eventos_cua <- gather(data = cronotax_decl_iva_cua, key = "evento", value = "plazo", 5:ncol(cronotax_decl_iva_cua))
+
+eventos_rfte <- gather(data = cronotax_decl_rfte, key = "evento", value = "plazo", 5:ncol(cronotax_decl_rfte))
+
+eventos_ico <- gather(data = cronotax_decl_ico, key = "evento", value = "plazo", 5:ncol(cronotax_decl_ico))
+
+eventos_renta_pn <- gather(data = cronotax_decl_renta_pn, key = "evento", value = "plazo", 5:ncol(cronotax_decl_renta_pn))
+
+eventos_renta_pj <- gather(data = cronotax_decl_renta_pj, key = "evento", value = "plazo", 5:ncol(cronotax_decl_renta_pj))
+
+eventos_apor <- gather(data = cronotax_decl_apor, key = "evento", value = "plazo", 5:ncol(cronotax_decl_apor))
+
+eventos_repor_exodian_ngc <- gather(data = cronotax_report_exo_dian_ngc, key = "evento", value = "plazo", 5:ncol(cronotax_report_exo_dian_ngc))
+
+eventos_repor_exo_ica_tulua <- gather(data = cronotax_report_exo_ica_tulua, key = "evento", value = "plazo", 5:ncol(cronotax_report_exo_ica_tulua))
+
+eventos_repor_exo_ica_dosquebradas <- gather(data = cronotax_report_exo_ica_dosquebradas, key = "evento", value = "plazo", 5:ncol(cronotax_report_exo_ica_dosquebradas))
+
+eventos_repor_exo_ica_pereira <- gather(data = cronotax_report_exo_ica_pereira, key = "evento", value = "plazo", 5:ncol(cronotax_report_exo_ica_pereira))
+
+eventos_repor_exo_ica_bogota <- gather(data = cronotax_report_exo_ica_bogota, key = "evento", value = "plazo", 5:ncol(cronotax_report_exo_ica_bogota))
+
+eventos_ica_bogota_c <- gather(data = cronotax_decl_ica_bogota_c, key = "evento", value = "plazo", 5:ncol(cronotax_decl_ica_bogota_c))
+
+eventos_ica_bogota_a <- gather(data = cronotax_decl_ica_bogota_a, key = "evento", value = "plazo", 5:ncol(cronotax_decl_ica_bogota_a))
+
+eventos_reteica_bogota <- gather(data = cronotax_decl_reteica_bogota, key = "evento", value = "plazo", 5:ncol(cronotax_decl_reteica_bogota))
+
+eventos_ica_dosquebradas <- gather(data = cronotax_decl_ica_dosquebradas, key = "evento", value = "plazo", 5:ncol(cronotax_decl_ica_dosquebradas))
+
+eventos_reteica_dosquebradas <- gather(data = cronotax_decl_reteica_dosquebradas, key = "evento", value = "plazo", 5:ncol(cronotax_decl_reteica_dosquebradas))
+
+eventos_ica_pereira <- gather(data = cronotax_decl_ica_pereira, key = "evento", value = "plazo", 5:ncol(cronotax_decl_ica_pereira))
+
+eventos_reteica_pereira <- gather(data = cronotax_decl_reteica_pereira, key = "evento", value = "plazo", 5:ncol(cronotax_decl_reteica_pereira))
+
+eventos_ica_santarosa <- gather(data = cronotax_decl_ica_santarosa, key = "evento", value = "plazo", 5:ncol(cronotax_decl_ica_santarosa))
+
+eventos_reteica_santarosa <- gather(data = cronotax_decl_reteica_santarosa, key = "evento", value = "plazo", 5:ncol(cronotax_decl_reteica_santarosa))
+
+eventos_ica_tulua <- gather(data = cronotax_decl_ica_tulua, key = "evento", value = "plazo", 5:ncol(cronotax_decl_ica_tulua))
+
+eventos_reteica_tulua <- gather(data = cronotax_decl_reteica_tulua, key = "evento", value = "plazo", 5:ncol(cronotax_decl_reteica_tulua))
+
+eventos_nom_elect <- gather(data = cronotax_report_nom_elect, key = "evento", value = "plazo", 5:ncol(cronotax_report_nom_elect))
+
+eventos_imp_pat <- gather(data = cronotax_decl_impat, key = "evento", value = "plazo", 5:ncol(cronotax_decl_impat))
+
+eventos_rst <- gather(data = cronotax_decl_rst, key = "evento", value = "plazo", 5:ncol(cronotax_decl_rst))
+
+eventos_supersoc <- gather(data = cronotax_report_supersoc, key = "evento", value = "plazo", 5:ncol(cronotax_report_supersoc))
+
+eventos_act_ext_pn <- gather(data = cronotax_decl_act_ext_pn, key = "evento", value = "plazo", 5:ncol(cronotax_decl_act_ext_pn))
+
+eventos_iva <- rbind(eventos_bim, eventos_cua)
+
+eventos_iva_rte <- rbind(eventos_iva, eventos_rfte)
+
+eventos_iva_rte_ico <- rbind(eventos_iva_rte, eventos_ico)
+
+eventos_iva_rte_ico_rtapn <- rbind(eventos_iva_rte_ico, eventos_renta_pn)
+
+eventos_iva_hasta_apor <- rbind(eventos_iva_rte_ico_rtapn,eventos_apor)
+
+eventos_iva_hasta_rtapj <- rbind(eventos_iva_hasta_apor,eventos_renta_pj)
+
+eventos_hasta_ica_bogota_c <- rbind(eventos_iva_hasta_rtapj,eventos_ica_bogota_c)
+
+eventos_hasta_ica_bogota_a <- rbind(eventos_hasta_ica_bogota_c, eventos_ica_bogota_a)
+
+eventos_hasta_reteica_bogota <- rbind(eventos_hasta_ica_bogota_a,eventos_reteica_bogota)
+
+eventos_hasta_ica_dosquebradas <- rbind(eventos_hasta_reteica_bogota,eventos_ica_dosquebradas)
+
+eventos_hasta_reteica_dosquebradas <- rbind(eventos_hasta_ica_dosquebradas,eventos_reteica_dosquebradas)
+
+eventos_hasta_ica_pereira <- rbind(eventos_hasta_reteica_dosquebradas,eventos_ica_pereira)
+
+eventos_hasta_reteica_pereira <- rbind(eventos_hasta_ica_pereira,eventos_reteica_pereira)
+
+eventos_hasta_ica_santarosa <- rbind(eventos_hasta_reteica_pereira,eventos_ica_santarosa)
+
+eventos_hasta_reteica_santarosa <- rbind(eventos_hasta_ica_santarosa,eventos_reteica_santarosa)
+
+eventos_hasta_ica_tulua <- rbind(eventos_hasta_reteica_santarosa,eventos_ica_tulua)
+
+eventos_hasta_reteica_tulua <- rbind(eventos_hasta_ica_tulua,eventos_reteica_tulua)
+
+eventos_hasta_nom_elect <- rbind(eventos_hasta_reteica_tulua, eventos_nom_elect)
+
+eventos_hasta_imp_pat <- rbind(eventos_hasta_nom_elect, eventos_imp_pat)
+
+eventos_hasta_rst <- rbind(eventos_hasta_imp_pat, eventos_rst)
+
+eventos_hasta_supersoc <- rbind(eventos_hasta_rst, eventos_supersoc)
+
+eventos_hasta_act_ext <- rbind(eventos_hasta_supersoc, eventos_act_ext_pn)
+
+eventos_hasta_exoica_tulua <- rbind(eventos_hasta_act_ext, eventos_repor_exo_ica_tulua)
+
+eventos_hasta_exoica_dosquebradas <- rbind(eventos_hasta_exoica_tulua, eventos_repor_exo_ica_dosquebradas)
+
+eventos_hasta_exoica_pereira <- rbind(eventos_hasta_exoica_dosquebradas, eventos_repor_exo_ica_pereira)
+
+eventos_hasta_exoica_bogota <- rbind(eventos_hasta_exoica_pereira, eventos_repor_exo_ica_bogota)
+
+eventos_consol <- rbind(eventos_hasta_exoica_bogota, eventos_repor_exodian_ngc)
+
+eventos <- eventos_consol[order(eventos_consol$plazo), ]
+
+eventos_todos <- eventos[,-3:-4]
+
+eventos <- eventos_todos[eventos_todos$plazo>dia_inicio_reporte,]
+
+
+```
+
+```{r include=FALSE}
+this_day <- today(tzone = "GMT -5")
+
+#as.Date("2024-12-02")
+
+days_crono_show <- 30
+limit_days_crono <- days_crono_show + 1
+days_task <- this_day
+day_crono <- this_day
+for (i in 0:days_crono_show) {
+
+  
+  day_crono = day_crono + 1
+  
+  days_task <- append(days_task, day_crono)
+  
+}
+
+plazo <- days_task
+days_crono_task <- data.frame(plazo)
+
+cronotask_month <- days_crono_task %>% left_join(eventos, by = 'plazo')
+
+```
+
+<label for="start">Start date:</label>
+
+```{=html}
+<input type="date" id="start" name="trip-start"
+       value="today()"
+       min="2024-01-01" max="24-12-31">
+```
+<h1 style="color : blue;">
+
+Eventos para los próximos 30 días
+
+</h1>
+
+```{r echo=FALSE}
+
+DT::datatable(cronotask_month, options = list(pageLength = 20, autoWidth = TRUE))
+
+```
+
+<h1 style="color : blue;">
+
+Todos los eventos en orden cronológico
+
+</h1>
+
+```{r echo=FALSE}
+
+DT::datatable(eventos, options = list(pageLength = 10, autoWidth = TRUE))
+
+```
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+
+eventos_por_declarante <- spread(data = eventos, key = "evento", value = "plazo")
+
+```
+
+<h1 style="color : blue;">
+
+Todos los eventos por declarante
+
+</h1>
+
+```{r echo=FALSE}
+
+DT::datatable(eventos_por_declarante, options = list(pageLength = 50, autoWidth = TRUE))
+
+```
+
+```{r echo=FALSE}
+
+archivo_csv <- "eventos.csv"
+
+write.csv(eventos, file = archivo_csv, row.names = FALSE)
+
+```
+
+```{r echo=FALSE}
+
+archivo_descargar <- "https://rcloud.social/workspace/edinsonpb@gmail.com/cronograma/Cloud/project/archivo_csv"
+
+```
+
+
+
