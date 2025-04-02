@@ -18,7 +18,14 @@ def load_excel_data():
             'ivacua': pd.read_excel(excel_path, sheet_name='ivacua', parse_dates=True),
             'retefte': pd.read_excel(excel_path, sheet_name='retefte', parse_dates=True),
             'rst': pd.read_excel(excel_path, sheet_name='rst', parse_dates=True),
-            'parafiscales': pd.read_excel(excel_path, sheet_name='parafiscales', parse_dates=True)
+            'parafiscales': pd.read_excel(excel_path, sheet_name='parafiscales', parse_dates=True),
+            'reteicatulua': pd.read_excel(excel_path, sheet_name='reteicatulua', parse_dates=True),
+            'reteicabogota': pd.read_excel(excel_path, sheet_name='reteicabogota', parse_dates=True),
+            'reteicapereira': pd.read_excel(excel_path, sheet_name='reteicapereira', parse_dates=True),
+            'reteicadosquebradas': pd.read_excel(excel_path, sheet_name='reteicadosquebradas', parse_dates=True),
+            'rtapj': pd.read_excel(excel_path, sheet_name='rtapj', parse_dates=True),
+            'rtapn': pd.read_excel(excel_path, sheet_name='rtapn', parse_dates=True),
+            'supersoc': pd.read_excel(excel_path, sheet_name='supersoc', parse_dates=True)
         }
         return sheets
     except Exception as e:
@@ -39,7 +46,7 @@ def process_declarantes(df):
         return None
 
 def filter_declarantes(df, tipo):
-    """Filter declarantes por tipo (IVA Bimestral, Cuatrimestral, RFT, RST o SEG)."""
+    """Filter declarantes por tipo (IVA Bimestral, Cuatrimestral, RFT, RST, SEG o RTI)."""
     try:
         # Verificar si la columna First Name existe
         if 'First Name' not in df.columns:
@@ -58,6 +65,22 @@ def filter_declarantes(df, tipo):
             mask = df['RST'].notna() & (df['RST'] != '')
         elif tipo == 'SEG':
             mask = df['SEG'].notna() & (df['SEG'] != '')
+        elif tipo == 'RTI_TULUA':
+            mask = df['RTI'].notna() & (df['RTI'] != '') & (df['RTI'].str.contains('TULUA', case=False, na=False))
+        elif tipo == 'RTI_BOGOTA':
+            mask = df['RTI'].notna() & (df['RTI'] != '') & (df['RTI'].str.contains('BOGOTA', case=False, na=False))
+        elif tipo == 'RTI_PEREIRA':
+            mask = df['RTI'].notna() & (df['RTI'] != '') & (df['RTI'].str.contains('PEREIRA', case=False, na=False))
+        elif tipo == 'RTI_DOSQUEBRADAS':
+            mask = df['RTI'].notna() & (df['RTI'] != '') & (df['RTI'].str.contains('DOSQUEBRADAS', case=False, na=False))
+        elif tipo == 'RT1_PJ':
+            mask = df['RT1'].notna() & (df['RT1'] != '') & (df['TP'] == 'PJ')
+        elif tipo == 'RT1_PN':
+            mask = df['RT1'].notna() & (df['RT1'] != '') & (df['TP'] == 'PN')
+        elif tipo == 'SUPERVIG_SUPERSOC':
+            mask = df['SUPERVIG'].notna() & (df['SUPERVIG'] != '') & (df['SUPERVIG'].str.contains('SUPERSOC', case=False, na=False))
+        elif tipo == 'RT2':
+            mask = df['RT2'].notna() & (df['RT2'] != '')
         else:
             st.error(f"Tipo de declarante no válido: {tipo}")
             return None
@@ -191,6 +214,70 @@ def main():
                 if merged_seg_df is not None:
                     st.subheader("Declarantes Parafiscales con Fechas")
                     st.dataframe(merged_seg_df)
+            
+            # Filtrar y mostrar declarantes RTI de Tuluá
+            rti_tulua_declarantes = filter_declarantes(declarantes, 'RTI_TULUA')
+            if rti_tulua_declarantes is not None and not rti_tulua_declarantes.empty:
+                merged_rti_tulua_df = merge_with_dates(rti_tulua_declarantes, sheets['reteicatulua'], 'reteicatulua')
+                if merged_rti_tulua_df is not None:
+                    st.subheader("Declarantes ReteICA Tuluá con Fechas")
+                    st.dataframe(merged_rti_tulua_df)
+            
+            # Filtrar y mostrar declarantes RTI de Bogotá
+            rti_bogota_declarantes = filter_declarantes(declarantes, 'RTI_BOGOTA')
+            if rti_bogota_declarantes is not None and not rti_bogota_declarantes.empty:
+                merged_rti_bogota_df = merge_with_dates(rti_bogota_declarantes, sheets['reteicabogota'], 'reteicabogota')
+                if merged_rti_bogota_df is not None:
+                    st.subheader("Declarantes ReteICA Bogotá con Fechas")
+                    st.dataframe(merged_rti_bogota_df)
+            
+            # Filtrar y mostrar declarantes RTI de Pereira
+            rti_pereira_declarantes = filter_declarantes(declarantes, 'RTI_PEREIRA')
+            if rti_pereira_declarantes is not None and not rti_pereira_declarantes.empty:
+                merged_rti_pereira_df = merge_with_dates(rti_pereira_declarantes, sheets['reteicapereira'], 'reteicapereira')
+                if merged_rti_pereira_df is not None:
+                    st.subheader("Declarantes ReteICA Pereira con Fechas")
+                    st.dataframe(merged_rti_pereira_df)
+            
+            # Filtrar y mostrar declarantes RTI de Dosquebradas
+            rti_dosquebradas_declarantes = filter_declarantes(declarantes, 'RTI_DOSQUEBRADAS')
+            if rti_dosquebradas_declarantes is not None and not rti_dosquebradas_declarantes.empty:
+                merged_rti_dosquebradas_df = merge_with_dates(rti_dosquebradas_declarantes, sheets['reteicadosquebradas'], 'reteicadosquebradas')
+                if merged_rti_dosquebradas_df is not None:
+                    st.subheader("Declarantes ReteICA Dosquebradas con Fechas")
+                    st.dataframe(merged_rti_dosquebradas_df)
+            
+            # Filtrar y mostrar declarantes RT1 de tipo Persona Jurídica
+            rt1_pj_declarantes = filter_declarantes(declarantes, 'RT1_PJ')
+            if rt1_pj_declarantes is not None and not rt1_pj_declarantes.empty:
+                merged_rt1_pj_df = merge_with_dates(rt1_pj_declarantes, sheets['rtapj'], 'rtapj', use_ddn=True)
+                if merged_rt1_pj_df is not None:
+                    st.subheader("Declarantes RT1 Persona Jurídica con Fechas")
+                    st.dataframe(merged_rt1_pj_df)
+            
+            # Filtrar y mostrar declarantes RT1 de tipo Persona Natural
+            rt1_pn_declarantes = filter_declarantes(declarantes, 'RT1_PN')
+            if rt1_pn_declarantes is not None and not rt1_pn_declarantes.empty:
+                merged_rt1_pn_df = merge_with_dates(rt1_pn_declarantes, sheets['rtapn'], 'rtapn', use_ddn=True)
+                if merged_rt1_pn_df is not None:
+                    st.subheader("Declarantes RT1 Persona Natural con Fechas")
+                    st.dataframe(merged_rt1_pn_df)
+            
+            # Filtrar y mostrar declarantes SUPERVIG con SUPERSOC
+            supervig_supersoc_declarantes = filter_declarantes(declarantes, 'SUPERVIG_SUPERSOC')
+            if supervig_supersoc_declarantes is not None and not supervig_supersoc_declarantes.empty:
+                merged_supervig_supersoc_df = merge_with_dates(supervig_supersoc_declarantes, sheets['supersoc'], 'supersoc', use_ddn=True)
+                if merged_supervig_supersoc_df is not None:
+                    st.subheader("Declarantes SUPERVIG SUPERSOC con Fechas")
+                    st.dataframe(merged_supervig_supersoc_df)
+            
+            # Filtrar y mostrar declarantes RT2
+            rt2_declarantes = filter_declarantes(declarantes, 'RT2')
+            if rt2_declarantes is not None and not rt2_declarantes.empty:
+                merged_rt2_df = merge_with_dates(rt2_declarantes, sheets['rtapj'], 'rtapj')
+                if merged_rt2_df is not None:
+                    st.subheader("Declarantes RT2 con Fechas")
+                    st.dataframe(merged_rt2_df)
         else:
             st.error("Error al procesar los declarantes")
     else:
