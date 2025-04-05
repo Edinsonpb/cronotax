@@ -25,7 +25,14 @@ def load_excel_data():
             'reteicadosquebradas': pd.read_excel(excel_path, sheet_name='reteicadosquebradas', parse_dates=True),
             'rtapj': pd.read_excel(excel_path, sheet_name='rtapj', parse_dates=True),
             'rtapn': pd.read_excel(excel_path, sheet_name='rtapn', parse_dates=True),
-            'supersoc': pd.read_excel(excel_path, sheet_name='supersoc', parse_dates=True)
+            'supersoc': pd.read_excel(excel_path, sheet_name='supersoc', parse_dates=True),
+            'actextpn': pd.read_excel(excel_path, sheet_name='actextpn', parse_dates=True),
+            'icapereira': pd.read_excel(excel_path, sheet_name='icapereira', parse_dates=True),
+            'icabogotaa': pd.read_excel(excel_path, sheet_name='icabogotaa', parse_dates=True),
+            'icaarmenia': pd.read_excel(excel_path, sheet_name='icaarmenia', parse_dates=True),
+            'icadosquebradas': pd.read_excel(excel_path, sheet_name='icadosquebradas', parse_dates=True),
+            'icabogotac': pd.read_excel(excel_path, sheet_name='icabogotac', parse_dates=True),
+            'nomelect': pd.read_excel(excel_path, sheet_name='nomelect', parse_dates=True)
         }
         return sheets
     except Exception as e:
@@ -81,6 +88,20 @@ def filter_declarantes(df, tipo):
             mask = df['SUPERVIG'].notna() & (df['SUPERVIG'] != '') & (df['SUPERVIG'].str.contains('SUPERSOC', case=False, na=False))
         elif tipo == 'RT2':
             mask = df['RT2'].notna() & (df['RT2'] != '')
+        elif tipo == 'ACTEXTPN':
+            mask = df['ActExtPn'].notna() & (df['ActExtPn'] != '') & (df['TP'] == 'PN')
+        elif tipo == 'ICA_PEREIRA':
+            mask = (df['ICA'] == 'A') & (df['RTI'].notna()) & (df['RTI'] != '') & (df['RTI'].str.contains('PEREIRA', case=False, na=False))
+        elif tipo == 'ICA_BOGOTA':
+            mask = (df['ICA'] == 'A') & (df['RTI'].notna()) & (df['RTI'] != '') & (df['RTI'].str.contains('BOGOTA', case=False, na=False))
+        elif tipo == 'ICA_ARMENIA':
+            mask = (df['ICA'] == 'A') & (df['RTI'].notna()) & (df['RTI'] != '') & (df['RTI'].str.contains('ARMENIA', case=False, na=False))
+        elif tipo == 'ICA_DOSQUEBRADAS':
+            mask = (df['ICA'] == 'A') & (df['RTI'].notna()) & (df['RTI'] != '') & (df['RTI'].str.contains('DOSQUEBRADAS', case=False, na=False))
+        elif tipo == 'ICA_BOGOTA_B':
+            mask = (df['ICA'] == 'B') & (df['RTI'].notna()) & (df['RTI'] != '') & (df['RTI'].str.contains('BOGOTA', case=False, na=False))
+        elif tipo == 'NOMELEC':
+            mask = df['nomelec'].notna() & (df['nomelec'] != '')
         else:
             st.error(f"Tipo de declarante no válido: {tipo}")
             return None
@@ -278,6 +299,62 @@ def main():
                 if merged_rt2_df is not None:
                     st.subheader("Declarantes RT2 con Fechas")
                     st.dataframe(merged_rt2_df)
+            
+            # Filtrar y mostrar declarantes ActExtPn de tipo Persona Natural
+            actextpn_declarantes = filter_declarantes(declarantes, 'ACTEXTPN')
+            if actextpn_declarantes is not None and not actextpn_declarantes.empty:
+                merged_actextpn_df = merge_with_dates(actextpn_declarantes, sheets['actextpn'], 'actextpn', use_ddn=True)
+                if merged_actextpn_df is not None:
+                    st.subheader("Declarantes ActExtPn Persona Natural con Fechas")
+                    st.dataframe(merged_actextpn_df)
+            
+            # Filtrar y mostrar declarantes ICA de Pereira
+            ica_pereira_declarantes = filter_declarantes(declarantes, 'ICA_PEREIRA')
+            if ica_pereira_declarantes is not None and not ica_pereira_declarantes.empty:
+                merged_ica_pereira_df = merge_with_dates(ica_pereira_declarantes, sheets['icapereira'], 'icapereira')
+                if merged_ica_pereira_df is not None:
+                    st.subheader("Declarantes ICA Pereira con Fechas")
+                    st.dataframe(merged_ica_pereira_df)
+            
+            # Filtrar y mostrar declarantes ICA de Bogotá
+            ica_bogota_declarantes = filter_declarantes(declarantes, 'ICA_BOGOTA')
+            if ica_bogota_declarantes is not None and not ica_bogota_declarantes.empty:
+                merged_ica_bogota_df = merge_with_dates(ica_bogota_declarantes, sheets['icabogotaa'], 'icabogotaa')
+                if merged_ica_bogota_df is not None:
+                    st.subheader("Declarantes ICA Bogotá con Fechas")
+                    st.dataframe(merged_ica_bogota_df)
+            
+            # Filtrar y mostrar declarantes ICA de Armenia
+            ica_armenia_declarantes = filter_declarantes(declarantes, 'ICA_ARMENIA')
+            if ica_armenia_declarantes is not None and not ica_armenia_declarantes.empty:
+                merged_ica_armenia_df = merge_with_dates(ica_armenia_declarantes, sheets['icaarmenia'], 'icaarmenia')
+                if merged_ica_armenia_df is not None:
+                    st.subheader("Declarantes ICA Armenia con Fechas")
+                    st.dataframe(merged_ica_armenia_df)
+            
+            # Filtrar y mostrar declarantes ICA de Dosquebradas
+            ica_dosquebradas_declarantes = filter_declarantes(declarantes, 'ICA_DOSQUEBRADAS')
+            if ica_dosquebradas_declarantes is not None and not ica_dosquebradas_declarantes.empty:
+                merged_ica_dosquebradas_df = merge_with_dates(ica_dosquebradas_declarantes, sheets['icadosquebradas'], 'icadosquebradas')
+                if merged_ica_dosquebradas_df is not None:
+                    st.subheader("Declarantes ICA Dosquebradas con Fechas")
+                    st.dataframe(merged_ica_dosquebradas_df)
+            
+            # Filtrar y mostrar declarantes ICA de Bogotá con tipo B
+            ica_bogota_b_declarantes = filter_declarantes(declarantes, 'ICA_BOGOTA_B')
+            if ica_bogota_b_declarantes is not None and not ica_bogota_b_declarantes.empty:
+                merged_ica_bogota_b_df = merge_with_dates(ica_bogota_b_declarantes, sheets['icabogotac'], 'icabogotac')
+                if merged_ica_bogota_b_df is not None:
+                    st.subheader("Declarantes ICA Bogotá Tipo B con Fechas")
+                    st.dataframe(merged_ica_bogota_b_df)
+            
+            # Filtrar y mostrar declarantes NOMELEC
+            nomelec_declarantes = filter_declarantes(declarantes, 'NOMELEC')
+            if nomelec_declarantes is not None and not nomelec_declarantes.empty:
+                merged_nomelec_df = merge_with_dates(nomelec_declarantes, sheets['nomelect'], 'nomelect')
+                if merged_nomelec_df is not None:
+                    st.subheader("Declarantes NOMELEC con Fechas")
+                    st.dataframe(merged_nomelec_df)
         else:
             st.error("Error al procesar los declarantes")
     else:
